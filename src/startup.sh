@@ -1,3 +1,2 @@
-docker-compose up airflow-webserver
-docker-compose run airflow-webserver airflow db init
-docker-compose up
+mkdir -p ../data/config ../data/logs ../data/plugins ../data/postgres
+docker-compose -f docker-compose.yml up -d
