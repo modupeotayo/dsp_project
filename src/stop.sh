@@ -1,2 +1,2 @@
-docker-compose 
+docker-compose down
 rm -rf ../data
