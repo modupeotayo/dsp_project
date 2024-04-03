@@ -101,5 +101,3 @@ pip install mymodule-1.0.0.tar.gz
 
 Modify the version number if you made or put any changes in the module.
 pip install /path/to/your_package.tar.gz --upgrade
-
-![image](https://github.com/modupeotayo/dsp_project/assets/90942498/f511f957-6e01-4bbd-99a8-29311ba474bb)
