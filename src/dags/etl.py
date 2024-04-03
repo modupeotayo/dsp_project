@@ -16,9 +16,9 @@ default_args = {
 }
 
 def process_file(**kwargs):
-    raw_data_path = kwargs.get('raw_data_path', '/path/to/raw_data/')
-    good_data_path = kwargs.get('good_data_path', '/path/to/good_data/')
-    bad_data_path = kwargs.get('bad_data_path', '/path/to/bad_data/')
+    raw_data_path = kwargs.get('raw_data_path', '/opt/data/raw-data/')
+    good_data_path = kwargs.get('good_data_path', '/opt/data/good-data/')
+    bad_data_path = kwargs.get('bad_data_path', '/opt/data/bad-data/')
     
     files = [f for f in os.listdir(raw_data_path) if f.endswith('.csv')]
     
@@ -41,9 +41,9 @@ dag = DAG('csv_quality_check', default_args=default_args, schedule_interval=time
 t1 = PythonOperator(
     task_id='process_file',
     python_callable=process_file,
-    op_kwargs={'raw_data_path': '../../data/raw-data/',
-               'good_data_path': '../../data/good-data/',
-               'bad_data_path': '../../data/bad-data/'},
+    op_kwargs={'raw_data_path': '/opt/data/raw-data/',
+               'good_data_path': '/opt/data/good-data/',
+               'bad_data_path': '/opt/data/bad-data/'},
     dag=dag,
 )
 

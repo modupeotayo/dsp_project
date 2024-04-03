@@ -8,11 +8,13 @@ x-airflow-common:
     - AIRFLOW__CORE__FERNET_KEY=FB0o_zt4e3Ziq3LdUUO7F2Z95cvFFx16hU8jTeR1ASM=
     - AIRFLOW__CORE__LOAD_EXAMPLES=False
     - AIRFLOW__CORE__LOGGING_LEVEL=INFO
+    - _PIP_ADDITIONAL_REQUIREMENTS="pandas"
   volumes:
     - ./dags:/opt/airflow/dags
-    - ../data/logs:/opt/airflow/logs
-    - ../data/plugins:/opt/airflow/plugins
-    - ../data/config:/opt/airlfow/config
+    - ../airflow-data/logs:/opt/airflow/logs
+    - ../airflow-data/plugins:/opt/airflow/plugins
+    - ../airflow-/config:/opt/airlfow/config
+    - ../data:/opt/data
   depends_on:
     - postgres
 
