@@ -59,7 +59,7 @@ Once the project is set up, you can use it as follows:
 
 Feel free to customize it further based on your specific project details and preferences.
 
-Exploratory Data Analysis (EDA)
+## Exploratory Data Analysis (EDA)
 
 RangeIndex: 10000 entries, 0 to 9999
 Data columns (total 10 columns):
@@ -79,13 +79,13 @@ Data columns (total 10 columns):
 
 dtypes: float64(3), int64(4), object(3)
 
-Features
+## Features
 -- {'Air temperature [K]', 'Process temperature [K]', 'Rotational speed [rpm]', 'Torque [Nm]', 'Tool wear [min]', 'Type'}
 
-Label
+## Label
 -- {'Target'} (have 1 as failure and zeros as not failure) -> need to predict failures.
 
-Model
+## Model
 The prediction is classifier, so random forest model is used to predict the target(failures) also for simplicity.
 
 Create modules packages to use in our project
