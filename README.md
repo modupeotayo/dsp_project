@@ -63,18 +63,20 @@ Exploratory Data Analysis (EDA)
 
 RangeIndex: 10000 entries, 0 to 9999
 Data columns (total 10 columns):
- #   Column                   Non-Null Count  Dtype  
----  ------                   --------------  -----  
- 0   UDI                      10000 non-null  int64  
- 1   Product ID               10000 non-null  object 
- 2   Type                     10000 non-null  object 
- 3   Air temperature [K]      10000 non-null  float64
- 4   Process temperature [K]  10000 non-null  float64
- 5   Rotational speed [rpm]   10000 non-null  int64  
- 6   Torque [Nm]              10000 non-null  float64
- 7   Tool wear [min]          10000 non-null  int64  
- 8   Target                   10000 non-null  int64  
- 9   Failure Type             10000 non-null  object 
+
+| Column                   | Non-Null Count | Dtype   |
+|--------------------------|----------------|---------|
+| UDI                      | 10000 non-null | int64   |
+| Product ID               | 10000 non-null | object  |
+| Type                     | 10000 non-null | object  |
+| Air temperature [K]      | 10000 non-null | float64 |
+| Process temperature [K]  | 10000 non-null | float64 |
+| Rotational speed [rpm]   | 10000 non-null | int64   |
+| Torque [Nm]              | 10000 non-null | float64 |
+| Tool wear [min]          | 10000 non-null | int64   |
+| Target                   | 10000 non-null | int64   |
+| Failure Type             | 10000 non-null | object  |
+
 dtypes: float64(3), int64(4), object(3)
 
 Features
