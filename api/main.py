@@ -1,4 +1,4 @@
-from datetime import date
+import datetime
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData, Table, create_engine
 import databases
@@ -11,7 +11,7 @@ from equipfailpred.inference import make_predictions
 from contextlib import asynccontextmanager
 # from models import Prediction
 from typing import List
-
+from io import StringIO
 
 
 COLM_ORDER = ['Product ID', 'Air temperature [K]', 'Process temperature [K]', 'Rotational speed [rpm]', 'Torque [Nm]', 'Tool wear [min]', 'Type']
@@ -46,7 +46,8 @@ def ar_tostr(data):
 
 def to_df(json_string: str)-> pd.DataFrame:
     json_data = json.loads(json_string)
-    df = pd.read_json(json_data)
+    json_data_io = StringIO(json_data)
+    df = pd.read_json(json_data_io)
     return df
 
 
@@ -74,7 +75,7 @@ async def makePredictions(data: ToPred):
     else:
         table = 'multiple_predictions'
         
-    current_date = date.today()
+    current_date = datetime.date.today()
     final_df['date'] = current_date.strftime("%Y-%m-%d")  
     final_df['source'] = data.source
     
@@ -110,10 +111,10 @@ class Prediction(BaseModel):
     source: str
 
 
-class PredictionRequest(BaseModel):
-    start_date: date
-    end_date: date
-    source: str
+# class PredictionRequest(BaseModel):
+#     start_date: date
+#     end_date: date
+#     source: str
 
 
 class PredictionResponse(BaseModel):
@@ -125,20 +126,29 @@ class PredictionResponse(BaseModel):
     tool_wear_min: int
     type: str
     prediction: int
-    date: date
+    date: datetime.date
     source: str
 
 
-# @app.get("/past-predictions")
-# async def fetchPredicitons(start_date: date, end_date: date, source: str = "all") -> List[PredictionResponse]:
-#     db = SessionLocal()
-#     try:
-#         query = table.select().where(table.c.date.between(start_date, end_date) & (table.c.source == source))
-#         result = db.execute(query).fetchall()
+@app.get("/past-predictions", response_model=List[PredictionResponse])
+async def fetch_predictions(start_date: str, end_date: str, source: str):
+    print(f"Received: start_date={start_date}, end_date={end_date}, source={source}")
+    try:
+        datetime.datetime.strptime(start_date, '%Y-%m-%d')
+        datetime.datetime.strptime(end_date, '%Y-%m-%d')
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD.")
 
-#         # Convert result to list of Data objects
-#         data_list = [PredictionResponse(**row) for row in result]
-#         return data_list
-#     finally:
-#         db.close()
+    query = "SELECT * FROM single_prediction WHERE date BETWEEN :start_date AND :end_date"
+    values = {"start_date": start_date, "end_date": end_date}
+
+    if source.lower() != "all":
+        query += " AND source = :source"
+        values["source"] = source
+
+    try:
+        rows = await database.fetch_all(query=query, values=values)
+        return [PredictionResponse(**row) for row in rows]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
         

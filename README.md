@@ -12,26 +12,25 @@ git clone <repository_url>
 cd <project_directory>
 
 3. Create a python virtual environment and install the required dependencies:
-pip install -r requirements.txt
-
+`pip install -r requirements.txt`
 
 4. Start the Airflow server and services:
-sh src/startup.sh
+`sh src/startup.sh`
 
 5. Install the predict model package: the ML model package is in the dist directory
-pip install ./dist/equipfailpred-1.0.0.tar.gz
+`pip install ./dist/equipfailpred-1.0.0.tar.gz`
 
 6. Make import work: use this command in your terminal. Add this in the .bashrc or .zshrc file of your terminal
-export PYTHONPATH=/path/to/the/parent_folder/for/example/project-follow-up/:$PYTHONPATH
+`export PYTHONPATH=/path/to/the/parent_folder/for/example/project-follow-up/:$PYTHONPATH`
 
 7. Set up postgresql: follow the commands in the psql.sql inside the database directory.
-sudo -i -u postgres
-\psql -d database_name
+`sudo -i -u postgres`
+`\psql -d database_name`
 8. Start API: in a separate terminal move to the API directory. then execute this command:
-uvicorn main:app --reload
+`uvicorn main:app --reload`
 this command will start the api, and give the url like http://127.0.0.1:8000
 9.Start the webapp: in a separate terminal move to the webapp directory. then execute this command, which is the starting point of the streamlit application.
-streamlit run predapp.py
+`streamlit run predapp.py`
 10. Finished setup: now you are all set, you can predict the equipment failure with this app, by providing the csv file or inputs manually.
 
 ## Usage
@@ -99,7 +98,7 @@ setup(
 )
 
 This will create a python zip for windows or tar.gz file for unix, we can install this dist using pip.
-pip install mymodule-1.0.0.tar.gz
+`pip install mymodule-1.0.0.tar.gz`
 
 Modify the version number if you made or put any changes in the module.
-pip install /path/to/your_package.tar.gz --upgrade
+`pip install /path/to/your_package.tar.gz --upgrade`

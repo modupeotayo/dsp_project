@@ -5,6 +5,7 @@ import json
 import requests
 from equipfailpred import FEATURES
 
+
 ID = ['Product ID']
 FEATURES = ['Air temperature [K]', 'Process temperature [K]', 'Rotational speed [rpm]', 'Torque [Nm]', 'Tool wear [min]', 'Type']
 COLNAME = ID + FEATURES
@@ -23,13 +24,35 @@ def to_ar(json_str: str):
     return arr
 
 
+def prepare_value_for_df(result):
+    try:
+        result_list = json.loads(result)
+        if isinstance(result_list, list):
+            final_value = [int(x) for x in result_list]
+        else:
+            final_value = int(result_list)
+    except json.JSONDecodeError:
+        if isinstance(result, str) and result.isdigit():
+            final_value = int(result)
+        else:
+            final_value = None
+    except ValueError:
+        final_value = None
+    return final_value
+
+
+def add_prediction_column_to_df(df, prediction_result):
+    final_value = prepare_value_for_df(prediction_result)
+    df['Predictions'] = final_value
+    return df
+
 
 def callmodel(df):
     df_str = to_str(df)
     response = requests.post(MODEL_API_URL, json={"source": 'webapp', "df":df_str})
     if response.status_code == 200:
         result = response.json()['pred']
-        st.write("Done!")
+        st.success("Done!")
         return result
     else:
         st.error("Failed to make prediction. Please try again.")
@@ -60,7 +83,8 @@ def single_prediction():
     st.write(df)
     if st.button("Predict Single Sample"):
         result = callmodel(df)
-        st.write(result)
+        final_df = add_prediction_column_to_df(df,result)
+        st.write(final_df)
             
 
 def multi_predictions():
@@ -71,25 +95,15 @@ def multi_predictions():
 
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)
-        col1, col2 = st.columns(2)
-        with col1:
-            sample_size = st.number_input(
-                "sample size (between 5 and 200)",
-                min_value=5, max_value=200)
-            sample_size = int(sample_size)
-        with col2:
-            random_state = st.number_input(
-                "random state (between 1 and 100)",
-                min_value=0, max_value=100)
-            random_state=int(random_state)
-            
-        sample_df = df.sample(n=sample_size,random_state=random_state)
-        st.write('Sample data:',sample_df)
+        st.write('Shape of the .CSV file',df.shape)
+        st.write('data:',df)
         
     if st.button('Predict'):
         if uploaded_file is not None:
-            result = callmodel(sample_df)
-            st.write(result)
+            result = callmodel(df)
+            final_df = add_prediction_column_to_df(df,result)
+            st.write('Shape of the results',final_df.shape)
+            st.write(final_df)
         else:
             st.error('File not detected, Please upload a valid .csv file')
 
