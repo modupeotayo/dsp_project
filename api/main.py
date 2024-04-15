@@ -1,31 +1,46 @@
 import datetime
+from datetime import date
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import MetaData, Table, create_engine
-import databases
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import create_engine, Column, Integer, String, Date
 import pandas as pd
 import json
 from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
 from equipfailpred import FEATURES
 from equipfailpred.inference import make_predictions
-from contextlib import asynccontextmanager
-# from models import Prediction
 from typing import List
 from io import StringIO
 
-
+app = FastAPI()
+df = pd.DataFrame
 COLM_ORDER = ['Product ID', 'Air temperature [K]', 'Process temperature [K]', 'Rotational speed [rpm]', 'Torque [Nm]', 'Tool wear [min]', 'Type']
-DATABASE_URL = "postgresql://postgres:postgres@localhost/my_newdb"
+
+DB_USER = "postgres"
+DB_PASSWORD = "postgres"
+DB_HOST = "localhost"
+DB_PORT = "5432"
+DB_NAME = "my_newdb"
+
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 TABLE = 'single_prediction'
-database = databases.Database(DATABASE_URL)
+# database = databases.Database(DATABASE_URL)
 engine = create_engine(DATABASE_URL)
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-metadata = MetaData()
+Base = declarative_base()
 
-table_name = "single_prediction"
-# table = Table(table_name, metadata, autoload_with=engine)
+class Prediction(Base):
+    __tablename__ = "predictions"
 
+    id = Column(Integer, primary_key=True, index=True)
+    date = Column(Date)
+    source = Column(String)
+    input_data = Column(String)
+    prediction = Column(String)
+
+Base.metadata.create_all(bind=engine)
 
 class FetchPred(BaseModel):
     start_date: str
@@ -51,19 +66,8 @@ def to_df(json_string: str)-> pd.DataFrame:
     return df
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    await database.connect()
-    yield
-    await database.disconnect()
-
-
-app = FastAPI(lifespan=lifespan)
-df = pd.DataFrame
-
-
 @app.post("/predict")
-async def makePredictions(data: ToPred):
+async def makePredictions(data: ToPred) :
     df = to_df(data.df)
     result = make_predictions(df[FEATURES])
     pred = ar_tostr(result)
@@ -128,6 +132,13 @@ class PredictionResponse(BaseModel):
     prediction: int
     date: datetime.date
     source: str
+
+@app.get("/data/")
+async def get_data(from_date: date, to_date: date, source: str):
+    db = SessionLocal()
+    data = db.query(Prediction).filter(Prediction.date >= from_date, Prediction.date <= to_date, Prediction.source == source).all()
+    db.close()
+    return data
 
 
 @app.get("/past-predictions", response_model=List[PredictionResponse])
