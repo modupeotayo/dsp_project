@@ -4,3 +4,4 @@ data/
 airflow-data/
 .vscode
 *.egg-info
+./notebooks

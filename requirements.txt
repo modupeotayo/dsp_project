@@ -9,8 +9,8 @@ flake8==7.0.0
 fastapi==0.110.0
 uvicorn==0.28.0
 streamlit==1.32.2
-sqlalchemy==2.0.29
-sqlalchemy-orm==1.2.10
+sqlalchemy
 asyncpg==0.29.0
+sqlalchemy-orm
 psycopg2-binary==2.9.9 
 databases==0.9.0
