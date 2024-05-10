@@ -38,8 +38,8 @@ async def makePredictions(data: ToPred) :
         return {"message": message,"pred":pred}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
+    
+    
 
 @app.post("/past-predictions")
 async def get_data(data: FetchPred):
