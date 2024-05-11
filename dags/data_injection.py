@@ -3,7 +3,11 @@ from datetime import timedelta
 
 from airflow.decorators import dag, task
 from airflow.utils.dates import days_ago
+from airflow.operators.python_operator import BranchPythonOperator
 
+
+def decide_branch(**kwargs):
+    return ['task_3', 'task_4', 'task_5']
 
 @dag(
     dag_id='data_injection',
@@ -43,16 +47,21 @@ def data_injection():
 
     # Task 2
     t2 = validate_data(2, t1)
+    
+    branching_task = BranchPythonOperator(
+        task_id='branching_task',
+        python_callable=decide_branch,
+        provide_context=True,
+    )
 
-    # Task 3
+    # Parallel tasks
     t3 = split_and_save_data(3, t2)
+    t4 = send_alert(4, t2)
+    t5 = save_data_errors(5, t2)
 
-    # Task 4
-    t4 = send_alert(4, t3)
-
-    # Task 5
-    t5 = save_data_errors(5, t4)
-
+    # Set dependencies
+    t1 >> t2 >> branching_task
+    branching_task >> [t3, t4, t5]
 
 # Run dag
 first_dag = data_injection()
