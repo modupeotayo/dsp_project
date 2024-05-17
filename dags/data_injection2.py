@@ -3,7 +3,7 @@ import os
 import random
 import shutil
 from datetime import timedelta
-
+import sqlalchemy as sa
 import great_expectations as ge
 from airflow.decorators import dag, task
 from airflow.utils.dates import days_ago
