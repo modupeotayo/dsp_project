@@ -1,14 +1,3 @@
-CREATE TABLE multiple_predictions (
-    product_id VARCHAR(255) PRIMARY KEY,
-    air_temperature_k FLOAT,
-    process_temperature_k FLOAT,
-    rotational_speed_rpm INT,
-    torque_nm FLOAT,
-    tool_wear_min INT,
-    type VARCHAR(255),
-    prediction INT
-);
-
 CREATE TABLE prediction (
     id SERIAL PRIMARY KEY,
     product_id VARCHAR(255) ,
@@ -23,18 +12,18 @@ CREATE TABLE prediction (
     source VARCHAR(255)
 );
 
+CREATE TABLE data_errors (
+    id SERIAL PRIMARY KEY,
+    timestamp TIMESTAMP,
+    file_number VARCHAR,
+    row_index INTEGER,
+    column_name VARCHAR,
+    error VARCHAR,
+    criticality VARCHAR
+);
 
-ALTER TABLE single_prediction
-ALTER COLUMN date_time TYPE DATE;
 
-ALTER TABLE single_prediction
-RENAME COLUMN date_time TO date;
-
-ALTER TABLE multiple_predictions
-ADD COLUMN date DATE,
-ADD COLUMN source VARCHAR(255);
-
-INSERT INTO single_prediction (
+INSERT INTO prediction (
     product_id,
     air_temperature_k,
     process_temperature_k,
@@ -54,6 +43,6 @@ INSERT INTO single_prediction (
     243,
     'L',
     1,
-    '2024-04-02',  -- Assuming '2024-04-02' is the date to be inserted
+    '2024-04-02',
     'webapp'
 );

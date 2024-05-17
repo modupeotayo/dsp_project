@@ -4,12 +4,14 @@ import numpy as np
 
 
 def introduce_data_issues(df):
-    df.loc[df.sample(frac=0.1).index, 'Air temperature [K]'] = np.nan
-    df.loc[df.sample(frac=0.1).index, 'Process temperature [K]'] = df.loc[df.sample(frac=0.1).index, 'Process temperature [K]'] * 1.1
-    df.loc[df.sample(frac=0.1).index, 'Torque [Nm]'] = df.loc[df.sample(frac=0.1).index, 'Torque [Nm]'] + np.random.normal(0, 5, size=len(df.sample(frac=0.1))) 
-    df.loc[df.sample(frac=0.1).index, 'Air temperature [K]'] = 'France'
     df.loc[df.sample(frac=0.1).index, 'Tool wear [min]'] = 'error'
-    df.loc[df.sample(frac=0.1).index, 'Process temperature [K]'] = df.loc[df.sample(frac=0.1).index, 'Process temperature [K]'] * -1
+    df.loc[df.sample(frac=0.1).index, 'Air temperature [K]'] = np.nan
+    df.loc[df.sample(frac=0.1).index, 'Process temperature [K]'] = 'France'
+    df.loc[df.sample(frac=0.1).index, 'Rotational speed [rpm]'] = df.loc[df.sample(frac=0.1).index, 'Process temperature [K]'] * -1
+    df.loc[df.sample(frac=0.1).index, 'Tool wear [min]'] = df.loc[df.sample(frac=0.1).index, 'Process temperature [K]'] * 1.1
+    # df.loc[df.sample(frac=0.1).index, 'Torque [Nm]'] = df.loc[df.sample(frac=0.1).index, 'Torque [Nm]'] + np.random.normal(0, 5, size=len(df.sample(frac=0.1))) 
+    large_noise = np.random.normal(1000, 200, size=len(df.sample(frac=0.1)))
+    df.loc[df.sample(frac=0.1).index, 'Torque [Nm]'] += large_noise
     df = pd.concat([df, df.sample(frac=0.05)])
     return df
 
