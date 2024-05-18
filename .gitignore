@@ -1,7 +1,9 @@
 data/
+
 *__pycache__/
 .ipynb_checkpoints
 airflow-data/
 .vscode
 *.egg-info
 ./notebooks
+raw-data/

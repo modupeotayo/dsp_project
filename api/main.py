@@ -34,7 +34,7 @@ async def makePredictions(data: ToPred) :
     print(final_df)
     try:
         final_df.to_sql(TABLE, engine, if_exists='append', index=False)
-        message = "Single prediction inserted successfully" if len(df) == 1 else "Multiple predictions inserted successfully"
+        message = "Prediction inserted successfully"
         return {"message": message,"pred":pred}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
